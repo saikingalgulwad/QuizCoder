@@ -1,0 +1,34 @@
+datasource db {
+  provider = "postgresql" // or "sqlite" for dev
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Language {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  chapters  Chapter[]
+  createdAt DateTime   @default(now())
+}
+
+model Chapter {
+  id          Int        @id @default(autoincrement())
+  title       String
+  language    Language   @relation(fields: [languageId], references: [id])
+  languageId  Int
+  questions   Question[]
+  createdAt   DateTime   @default(now())
+}
+
+model Question {
+  id         Int      @id @default(autoincrement())
+  question   String
+  options    String[] // multiple choice options
+  answer     String   // correct answer
+  chapter    Chapter  @relation(fields: [chapterId], references: [id])
+  chapterId  Int
+  createdAt  DateTime @default(now())
+}

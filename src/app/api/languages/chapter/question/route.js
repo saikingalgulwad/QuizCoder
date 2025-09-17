@@ -1,6 +1,25 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
+
+
+export async function GET(req) {
+  try {
+    const url = new URL(req.url);
+    const chapterId = Number(url.searchParams.get("chapterId"));
+
+    const questions = await prisma.question.findMany({
+      where: { chapterId },
+    });
+
+    return NextResponse.json(questions);
+  } catch (error) {
+    console.error("Failed to fetch questions:", error);
+    return NextResponse.json({ error: "Failed to fetch questions" }, { status: 500 });
+  }
+}
+
+
 export async function POST(req) {
   try {
     const body = await req.json();
